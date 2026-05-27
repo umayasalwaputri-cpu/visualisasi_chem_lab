@@ -139,10 +139,13 @@ else:
 
 
 
-    
 
-    
+
+
+
+
+
 
 
         
-        st.warning("Larutan berubah menjadi pink")
+        
