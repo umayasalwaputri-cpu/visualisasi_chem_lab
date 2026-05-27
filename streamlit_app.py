@@ -77,21 +77,8 @@ if menu == "Titrasi":
 
     elif volume == 25:
         st.success("Titik ekuivalen tercapai 🎉")
-import streamlit as st
-import time
-
-st.title("🧪 VirtualChem Lab")
-
-st.header("⚖️ Simulasi Penimbangan")
-
-# gambar neraca
-st.image(
-    "https://cdn-icons-png.flaticon.com/512/2921/2921822.png",
-    width=250
-)
-
-st.write("Tambahkan bahan kimia ke neraca")
-
+else:
+    st.warning("Larutan berubah pink")
 # slider massa
 massa = st.slider(
     "Geser untuk menambahkan massa",
@@ -127,14 +114,6 @@ volume = st.slider(
     50
 )
 
-if volume < 25:
-    st.info("Larutan masih bening")
-
-elif volume == 25:
-    st.success("Titik ekuivalen tercapai")
-
-else:
-    st.warning("Larutan berubah pink")
 
 
 
