@@ -1,137 +1,188 @@
 import streamlit as st
 import time
+import numpy as np
+import matplotlib.pyplot as plt
+
+st.set_page_config(page_title="VirtualChem Lab Game", layout="wide")
 
 # =========================
-# JUDUL WEB
+# STATE GAME
 # =========================
+if "page" not in st.session_state:
+    st.session_state.page = "home"
 
-st.title("🧪 VirtualChem Lab")
+if "xp" not in st.session_state:
+    st.session_state.xp = 0
 
-st.write("Simulasi Praktikum Kimia Virtual")
+if "log" not in st.session_state:
+    st.session_state.log = []
+
+def add_xp(value):
+    st.session_state.xp += value
+
+def add_log(text):
+    st.session_state.log.append(text)
 
 # =========================
-# MENU PRAKTIKUM
+# SIDEBAR (HUD GAME)
 # =========================
+st.sidebar.title("🎮 VirtualChem Lab")
+st.sidebar.write(f"⭐ XP: {st.session_state.xp}")
 
-menu = st.selectbox(
-    "Pilih Praktikum",
-    ["Menimbang", "Titrasi"]
+menu = st.sidebar.radio(
+    "Navigasi",
+    ["🏠 Home", "⚖️ Menimbang", "🧪 Titrasi", "📒 Log Book"]
 )
 
 # =========================
-# SIMULASI MENIMBANG
+# HOME DASHBOARD
 # =========================
+if menu == "🏠 Home":
 
-if menu == "Menimbang":
+    st.title("🧪 VirtualChem Lab - Game Dashboard")
 
-    st.header("⚖️ Simulasi Penimbangan")
+    st.write("Selamat datang di simulasi laboratorium virtual")
 
-    st.write(
-        "Geser slider untuk menambahkan bahan kimia ke neraca"
-    )
+    col1, col2, col3 = st.columns(3)
 
-    # gambar penimbangan
-    st.image(
-        "https://cdn-icons-png.flaticon.com/512/1046/1046857.png",
-        width=300
-    )
+    with col1:
+        st.metric("Level", "Beginner")
 
-    # slider massa
-    massa = st.slider(
-        "Tambahkan Massa (gram)",
-        0.0,
-        10.0,
-        0.0,
-        0.1
-    )
+    with col2:
+        st.metric("XP", st.session_state.xp)
 
-    # tampilan angka neraca
-    st.metric(
-        label="Hasil Neraca Digital",
-        value=f"{massa} gram"
-    )
+    with col3:
+        st.metric("Status", "Active 🟢")
 
-    # tombol mulai
-    if st.button("Mulai Menimbang"):
+    st.divider()
 
-        st.write("Proses Penimbangan...")
+    st.subheader("🎯 Quest Hari Ini")
 
-        progress = st.progress(0)
+    st.write("1. Lakukan penimbangan zat")
+    st.write("2. Selesaikan titrasi sampai titik ekuivalen")
+
+    st.info("Selesaikan quest untuk mendapatkan XP!")
+
+# =========================
+# MENIMBANG LEVEL
+# =========================
+if menu == "⚖️ Menimbang":
+
+    st.title("⚖️ Level 1 - Penimbangan")
+
+    st.image("https://cdn-icons-png.flaticon.com/512/809/809957.png", width=200)
+
+    massa = st.slider("Tambahkan massa (gram)", 0.0, 10.0, 0.0, 0.1)
+
+    st.metric("Neraca Digital", f"{massa:.2f} g")
+
+    if st.button("Mulai Penimbangan"):
+
+        add_log("Penimbangan dimulai")
+
+        bar = st.progress(0)
 
         for i in range(100):
             time.sleep(0.01)
-            progress.progress(i + 1)
+            bar.progress(i + 1)
 
-        st.success(
-            f"Penimbangan selesai: {massa} gram"
-        )
+        add_xp(10)
+        add_log(f"Penimbangan selesai: {massa:.2f} g")
 
+        st.success("Level selesai +10 XP 🎉")
         st.balloons()
 
 # =========================
-# SIMULASI TITRASI
+# TITRASI LEVEL
 # =========================
+if menu == "🧪 Titrasi":
 
-if menu == "Titrasi":
+    st.title("🧪 Level 2 - Titrasi Asam Basa")
 
-    st.header("🧪 Simulasi Titrasi")
+    volume = st.slider("Volume NaOH (mL)", 0, 50, 0)
 
-    st.write(
-        "Geser slider untuk menambahkan NaOH dari buret ke Erlenmeyer"
+    # warna larutan
+    if volume < 15:
+        color = "#4da6ff"
+        status = "Asam kuat"
+    elif volume < 25:
+        color = "#ffff66"
+        status = "Menuju ekuivalen"
+    elif volume == 25:
+        color = "#66ff66"
+        status = "Ekuivalen"
+    else:
+        color = "#ff66cc"
+        status = "Basa berlebih"
+
+    st.markdown(
+        f"""
+        <div style="
+            background-color:{color};
+            padding:25px;
+            border-radius:15px;
+            text-align:center;
+            font-size:18px;
+            font-weight:bold;">
+            Larutan: {status}
+        </div>
+        """,
+        unsafe_allow_html=True
     )
 
-    # gambar buret + erlenmeyer
-    st.image(
-        "https://cdn-icons-png.flaticon.com/512/2784/2784487.png",
-        width=300
-    )
+    st.progress(volume / 50)
 
-    # slider volume
-    volume = st.slider(
-        "Volume NaOH (mL)",
-        0,
-        50,
-        0
-    )
-
-    # animasi proses
     if st.button("Mulai Titrasi"):
 
-        st.write("Proses Titrasi...")
+        add_log("Titrasi dimulai")
 
-        progress = st.progress(0)
+        bar = st.progress(0)
 
         for i in range(100):
-            time.sleep(0.01)
-            progress.progress(i + 1)
+            time.sleep(0.015)
+            bar.progress(i + 1)
 
-        # kondisi larutan
-        if volume < 25:
+            if i % 10 == 0:
+                st.write("💧 Tetesan masuk...")
 
-            st.info(
-                "Larutan masih bening"
-            )
-
-        elif volume == 25:
-
-            st.success(
-                "Titik ekuivalen tercapai 🎉"
-            )
-
+        if volume == 25:
+            st.success("Perfect! Titik ekuivalen 🎉 +20 XP")
+            add_xp(20)
             st.balloons()
 
+        elif volume < 25:
+            st.warning("Kurang titrasi")
+            add_xp(5)
+
         else:
+            st.error("Over titration")
+            add_xp(3)
 
-            st.warning(
-                "Larutan berubah menjadi pink"
-            )
+    # grafik
+    st.subheader("📊 Kurva Titrasi")
 
-    # tampilan volume
-    st.metric(
-        label="Volume Saat Ini",
-        value=f"{volume} mL"
-    )
+    x = np.linspace(0, 50, 100)
+    y = [2 + v * 0.2 if v < 25 else 7 + (v - 25) * 0.3 for v in x]
 
+    fig, ax = plt.subplots()
+    ax.plot(x, y)
+    ax.axvline(25, color="red", linestyle="--")
+    ax.set_xlabel("Volume NaOH (mL)")
+    ax.set_ylabel("pH")
+
+    st.pyplot(fig)
+
+# =========================
+# LOG BOOK
+# =========================
+if menu == "📒 Log Book":
+
+    st.title("📒 Lab Activity Log")
+
+    st.write(f"Total XP: {st.session_state.xp}")
+
+    for i, log in enumerate(st.session_state.log[-15:]):
+        st.write(f"{i+1}. {log}")
 
 
 
