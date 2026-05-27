@@ -33,7 +33,6 @@ if menu == "Titrasi":
         st.info(
             "Larutan berubah warna menjadi pink"
         )
-app = Flask(_name_)
 
 # Home
 @app.route('/')
