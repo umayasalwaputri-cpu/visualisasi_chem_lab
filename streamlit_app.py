@@ -33,25 +33,19 @@ if menu == "Titrasi":
         st.info(
             "Larutan berubah warna menjadi pink"
         )
+# Judul
+st.title("Simulasi Menimbang")
 
-# Home
-@app.route('/')
-def home():
-    return render_template('index.html')
+# Input massa
+massa = st.number_input(
+    "Masukkan massa (gram)",
+    min_value=0.0,
+    step=0.1
+)
 
-# Halaman simulasi menimbang
-@app.route('/timbang')
-def timbang():
-    return render_template('timbang.html')
-
-# Halaman simulasi titrasi
-@app.route('/titrasi')
-def titrasi():
-    return render_template('titrasi.html')
-
-if _name_ == '_main_':
-    app.run(debug=True)
-
+# Tombol
+if st.button("Timbang"):
+    st.success(f"Hasil penimbangan: {massa} gram")
 
 
     
