@@ -77,8 +77,6 @@ if menu == "Titrasi":
 
     elif volume == 25:
         st.success("Titik ekuivalen tercapai 🎉")
-
-    else:
 import streamlit as st
 import time
 
